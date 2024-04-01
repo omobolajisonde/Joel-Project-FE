@@ -1,95 +1,119 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
 
-export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+import { useState } from "react";
+import axios from "axios";
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
+interface Course {
+  courseCode: string;
+  courseName: string;
 }
+
+const CreateLecturer: React.FC = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    courses: [{ courseCode: "", courseName: "" }],
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number,
+    fieldName: keyof Course
+  ) => {
+    const { value } = e.target;
+    const updatedCourses = [...formData.courses];
+    updatedCourses[index][fieldName] = value;
+    setFormData({
+      ...formData,
+      courses: updatedCourses,
+    });
+  };
+
+  const handleAddCourse = () => {
+    setFormData({
+      ...formData,
+      courses: [...formData.courses, { courseCode: "", courseName: "" }],
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/lecturers`,
+        formData
+      );
+      console.log(response.data);
+
+      // Reset form after successful submission
+      setFormData({
+        name: "",
+        email: "",
+        courses: [{ courseCode: "", courseName: "" }],
+      });
+    } catch (error) {
+      console.error("Error creating lecturer:", error);
+    }
+  };
+
+  return (
+    <div>
+      <h1>Create Lecturer</h1>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="name">Name:</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
+            required
+          />
+        </div>
+        <div>
+          <label>Courses:</label>
+          {formData.courses.map((course, index) => (
+            <div key={index}>
+              <input
+                type="text"
+                name="courseCode"
+                placeholder="Course Code"
+                value={course.courseCode}
+                onChange={(e) => handleChange(e, index, "courseCode")}
+                required
+              />
+              <input
+                type="text"
+                name="courseName"
+                placeholder="Course Name"
+                value={course.courseName}
+                onChange={(e) => handleChange(e, index, "courseName")}
+                required
+              />
+            </div>
+          ))}
+          <button type="button" onClick={handleAddCourse}>
+            Add Course
+          </button>
+        </div>
+        <button type="submit">Create Lecturer</button>
+      </form>
+    </div>
+  );
+};
+
+export default CreateLecturer;

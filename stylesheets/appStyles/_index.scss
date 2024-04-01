@@ -1,0 +1,58 @@
+@import url("https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300;0,400;0,500;0,600;0,700;0,900;1,300;1,400;1,500;1,600;1,700;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@200;300;400;600&display=swap");
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-family: "Red Hat Display", sans-serif;
+  background-color: $primary-color;
+}
+
+@media only screen and (max-width: $bp--large) {
+  html {
+    font-size: 55%;
+  }
+}
+
+@media only screen and (max-width: $bp--medium) {
+  html {
+    font-size: 48%;
+  }
+}
+
+@media only screen and (max-width: $bp--small) {
+  html {
+    font-size: 42%;
+  }
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 1.4rem;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: $secondary-color;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: $primary-light-color;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: $primary-color;
+  cursor: pointer;
+}
