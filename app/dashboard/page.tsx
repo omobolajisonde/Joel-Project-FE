@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Link from "next/link";
-import io from "socket.io-client";
+import { socket } from "./socket";
 
 interface Course {
   _id: string;
@@ -15,8 +15,6 @@ interface FormData {
   name: string;
   matricNo: string;
 }
-
-export const socket = io(`${process.env.NEXT_PUBLIC_BACKEND_WS}`);
 
 const Dashboard: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
